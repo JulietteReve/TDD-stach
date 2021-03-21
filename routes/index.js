@@ -8,23 +8,6 @@ const AppointmentModel = require('../models/appointments');
 var bdd = require('./models/bdd');
 
 
-router.post('/favorites', async function (req, res, next){
-  try {
-
-      
-      await UserModel.updateMany(
-      {token : req.body.token},
-      {$push : {favorites: req.body.id}}
-      )
-  
-
-  res.json({result: true})
-  } catch {
-    res.json({result: false})
-  }
-
-});
-
 router.post('/signIn', async function (req, res, next) {
   let result = false;
 
