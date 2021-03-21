@@ -1,23 +1,7 @@
 var app = require("../app")
 var request = require("supertest");
 
-
-// test("Réservation d'un trajet - Body correct", async (done) => {
-//  await request(app).post('/orderRide')
-//    .send({ token: 'hello', depart: "56 Boulevard Pereire 75017 Paris", destination: "145 Avenue de Villiers 75017 Paris" })
-//    .expect(200)
-//    .expect({ result: true, tempsAttente: 10 });
-//  done();
-// });
-
-// test("Ajout au favoris - Body incomplet", async (done) => {
-//   await request(app).post('/favorites')
-//     .send({ token: 'hello' })
-//     .expect(200)
-//     .expect({ result: false });
-//   done();
-//  });
-
+//TESTS SIGNIN
  test("Sign In - Password inexistant", async (done) => {
   await request(app).post('/signIn')
     .send({ email: 'qsgkjhgdjqdg@gmail.com' })
@@ -50,16 +34,85 @@ var request = require("supertest");
   done();
  });
 
+ test("Sign In - body correct", async (done) => {
+  await request(app).post('/signIn')
+    .send({ email: 'raf@gmail.com', password: 'secret'})
+    .expect(200)
+    .expect({ result: true});
+  done();
+ });
 
+ //TESTS SIGNUP
 
-//  test("Liste des précédentes courses - Query correct", async (done) => {
-//   await request(app).get('/passedRides')
-//     .query({ token: 1234 })
-//     .expect(200)
-//     .expect({ result: true, rides: [{
-//       courseId: 55,
-//       depart: '56 Boulevard Pereire 75017 Paris',
-//       destination: '145 Avenue de Villiers 75017 Paris'
-//     }] });
-//   done();
-//  });
+ test("Sign Up - body incomplet", async (done) => {
+  await request(app).post('/signUp')
+    .send({ email: 'raf@gmail.com'})
+    .expect(200)
+    .expect({ result: false, error: '"lastName" is required'});
+  done();
+ });
+
+ test("Sign Up - lastname trop court", async (done) => {
+  await request(app).post('/signUp')
+    .send({ firstName: 'helene',
+      lastName: 'g',
+      phoneNumber: '0617765645',
+      email: 'hello@hello.com',
+      password: 'hello',
+    })
+    .expect(200)
+    .expect({ result: false, error: '"lastName" length must be at least 2 characters long'});
+  done();
+ });
+
+ test("Sign Up - phoneNumber incorrect", async (done) => {
+  await request(app).post('/signUp')
+    .send({ firstName: 'helene',
+      lastName: 'helene',
+      phoneNumber: '06177656',
+      email: 'hello@hello.com',
+      password: 'hello',
+    })
+    .expect(200)
+    .expect({ result: false, error: '"phoneNumber" length must be at least 10 characters long'});
+  done();
+ });
+
+ test("Sign Up - email incorrect", async (done) => {
+  await request(app).post('/signUp')
+    .send({ firstName: 'helene',
+      lastName: 'helene',
+      phoneNumber: '0617765645',
+      email: 'helene.com',
+      password: 'hello',
+    })
+    .expect(200)
+    .expect({ result: false, error: '"email" must be a valid email'});
+  done();
+ });
+
+ test("Sign Up - email existe déjà", async (done) => {
+  await request(app).post('/signUp')
+    .send({ firstName: 'helene',
+      lastName: 'helene',
+      phoneNumber: '0617765645',
+      email: 'raf@gmail.com',
+      password: 'helloy',
+    })
+    .expect(200)
+    .expect({ result: false, emaiExist: "l'email existe déjà"});
+  done();
+ });
+
+ test("Sign Up - body ok", async (done) => {
+  await request(app).post('/signUp')
+    .send({ firstName: 'helene',
+      lastName: 'helene',
+      phoneNumber: '0617765645',
+      email: 'helene128@gmail.com',
+      password: 'helloy',
+    })
+    .expect(200)
+    .expect({ result: true});
+  done();
+ });
